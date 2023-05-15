@@ -99,7 +99,12 @@ fn animation_sequence(
                 }));
                 *counter = Counter(counter.0 + 1);
             }
-            Counter(1) => {}
+            Counter(1) => {
+                animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
+                    speed: -1.0,
+                    label: ObjectLabel("ECS-C".to_string()),
+                }));
+            }
             Counter(_) => {}
         }
     }
