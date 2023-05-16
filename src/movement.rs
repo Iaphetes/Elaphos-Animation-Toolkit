@@ -121,8 +121,7 @@ fn perform_rotation(
                     * movement.speed;
                 let new_rotation: Vec3;
                 if rotation_amount.is_nan()
-                    || rotation_amount.length()
-                        > (target_rotation - transform.rotation.xyz()).length()
+                    || rotation_amount.length() > (target_rotation - euler_rotation).length()
                 {
                     new_rotation = target_rotation;
                     commands.entity(entity).remove::<Rotate>();
@@ -130,10 +129,6 @@ fn perform_rotation(
                     new_rotation = euler_rotation + rotation_amount;
                 }
 
-                // transform.rotation.x = new_rotation.x;
-                // transform.rotation.y = new_rotation.y;
-                // transform.rotation.z = new_rotation.z;
-                // transform.rotation = transform.rotation.normalize();
                 *transform = transform.with_rotation(Quat::from_euler(
                     EulerRot::XYZ,
                     new_rotation.x,

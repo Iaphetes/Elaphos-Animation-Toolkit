@@ -101,11 +101,10 @@ fn animation_sequence(
                         y: 0.0,
                         z: f32::to_radians(180.0),
                     },
-                    speed: 1.0,
+                    speed: 10.0,
                     rotate_type: RotationType::LinearAbsolute,
                     label: ObjectLabel("ECS-C".to_string()),
                 }));
-                *counter = Counter(counter.0 + 1);
             }
             Counter(1) => {
                 animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
@@ -119,11 +118,13 @@ fn animation_sequence(
                         z: 0.0,
                     }],
                     speed: 100.0,
+
                     movement_type: TranslationType::LinearAbsolute,
                     label: ObjectLabel("ECS-E".to_string()),
                 }));
             }
             Counter(_) => {}
         }
+        counter.0 += 1;
     }
 }
