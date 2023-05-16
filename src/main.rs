@@ -82,7 +82,7 @@ fn animation_sequence(
         match counter.as_ref() {
             Counter(0) => {
                 animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
-                    speed: 1.0,
+                    speed: 10.0,
                     label: ObjectLabel("ECS-S".to_string()),
                 }));
                 animation_events.send(AnimationEvent::Translate(TranslateEvent {
@@ -91,7 +91,7 @@ fn animation_sequence(
                         y: 60.0,
                         z: 0.0,
                     }],
-                    speed: 100.0,
+                    speed: 1000.0,
                     movement_type: TranslationType::LinearAbsolute,
                     label: ObjectLabel("ECS-E".to_string()),
                 }));
@@ -121,6 +121,18 @@ fn animation_sequence(
 
                     movement_type: TranslationType::LinearAbsolute,
                     label: ObjectLabel("ECS-E".to_string()),
+                }));
+            }
+            Counter(2) => {
+                animation_events.send(AnimationEvent::Rotate(RotateEvent {
+                    rotation_amount: Vec3 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: f32::to_radians(180.0),
+                    },
+                    speed: 10.0,
+                    rotate_type: RotationType::LinearRelative,
+                    label: ObjectLabel("ECS-C".to_string()),
                 }));
             }
             Counter(_) => {}

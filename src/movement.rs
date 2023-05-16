@@ -89,7 +89,14 @@ fn rotation_init(
                         rotation_amount: match rotation_event.rotate_type {
                             RotationType::LinearAbsolute => rotation_event.rotation_amount,
                             RotationType::LinearRelative => {
-                                rotation_event.rotation_amount + transform.rotation.xyz()
+                                let (euler_x, euler_y, euler_z): (f32, f32, f32) =
+                                    transform.rotation.to_euler(EulerRot::XYZ);
+                                let euler_rotation: Vec3 = Vec3 {
+                                    x: euler_x,
+                                    y: euler_y,
+                                    z: euler_z,
+                                };
+                                rotation_event.rotation_amount + euler_rotation
                             }
                         },
                         speed: rotation_event.speed,

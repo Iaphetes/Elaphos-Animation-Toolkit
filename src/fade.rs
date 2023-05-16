@@ -49,7 +49,7 @@ fn text_fade(
     for (entity, mut text, fade) in texts.iter_mut() {
         for section in &mut text.sections {
             section.style.color = section.style.color.with_a(
-                section.style.color.a() - fade.fade_amount * time.delta_seconds() / fade.speed,
+                section.style.color.a() - fade.fade_amount * time.delta_seconds() * fade.speed,
             );
             if fade.speed > 0.0 && section.style.color.a() <= 0.0 {
                 section.style.color = section.style.color.with_a(0.0);
