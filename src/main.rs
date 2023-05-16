@@ -1,5 +1,7 @@
 //! Illustrates bloom post-processing in 2d.
 
+use std::f32::consts::PI;
+
 use bevy::{
     core_pipeline::{bloom::BloomSettings, tonemapping::Tonemapping},
     prelude::*,
@@ -10,7 +12,7 @@ mod fade;
 mod movement;
 use animation::{AnimationEvent, ObjectLabel};
 use fade::{FadePlugin, TextFadeEvent};
-use movement::{MovementPlugin, TranslateEvent, TranslationType};
+use movement::{MovementPlugin, RotateEvent, RotationType, TranslateEvent, TranslationType};
 
 #[derive(Resource)]
 struct Counter(u32);
@@ -83,26 +85,42 @@ fn animation_sequence(
                     speed: 1.0,
                     label: ObjectLabel("ECS-S".to_string()),
                 }));
-                animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
-                    speed: 1.0,
-                    label: ObjectLabel("ECS-C".to_string()),
-                }));
-                animation_events.send(AnimationEvent::Movement(TranslateEvent {
+                animation_events.send(AnimationEvent::Translate(TranslateEvent {
                     waypoints: vec![Vec3 {
                         x: 0.0,
                         y: 60.0,
                         z: 0.0,
                     }],
                     speed: 100.0,
-                    movement_type: TranslationType::Linear,
+                    movement_type: TranslationType::LinearAbsolute,
                     label: ObjectLabel("ECS-E".to_string()),
+                }));
+                animation_events.send(AnimationEvent::Rotate(RotateEvent {
+                    rotation_amount: Vec3 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: f32::to_radians(180.0),
+                    },
+                    speed: 1.0,
+                    rotate_type: RotationType::LinearAbsolute,
+                    label: ObjectLabel("ECS-C".to_string()),
                 }));
                 *counter = Counter(counter.0 + 1);
             }
             Counter(1) => {
                 animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
                     speed: -1.0,
-                    label: ObjectLabel("ECS-C".to_string()),
+                    label: ObjectLabel("ECS-S".to_string()),
+                }));
+                animation_events.send(AnimationEvent::Translate(TranslateEvent {
+                    waypoints: vec![Vec3 {
+                        x: 0.0,
+                        y: 60.0,
+                        z: 0.0,
+                    }],
+                    speed: 100.0,
+                    movement_type: TranslationType::LinearAbsolute,
+                    label: ObjectLabel("ECS-E".to_string()),
                 }));
             }
             Counter(_) => {}

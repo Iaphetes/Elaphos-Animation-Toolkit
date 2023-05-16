@@ -1,10 +1,14 @@
 use bevy::prelude::Component;
 
-use crate::{fade::TextFadeEvent, movement::TranslateEvent};
+use crate::{
+    fade::TextFadeEvent,
+    movement::{RotateEvent, TranslateEvent},
+};
 
 #[derive(Component, Eq, PartialEq)]
 pub struct ObjectLabel(pub String);
 pub enum AnimationEvent {
     TextFade(TextFadeEvent),
-    Movement(TranslateEvent),
+    Translate(TranslateEvent),
+    Rotate(RotateEvent),
 }
