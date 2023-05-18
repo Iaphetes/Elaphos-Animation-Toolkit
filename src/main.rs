@@ -10,7 +10,10 @@ use bevy::{
 mod animation;
 mod fade;
 mod movement;
+
+mod change_background;
 use animation::{AnimationEvent, ObjectLabel};
+use change_background::{BackgroundEvent, BackgroundPlugin};
 use fade::{FadePlugin, TextFadeEvent};
 use movement::{MovementPlugin, RotateEvent, RotationType, TranslateEvent, TranslationType};
 
@@ -24,6 +27,7 @@ fn main() {
         .add_event::<AnimationEvent>()
         .add_plugin(FadePlugin)
         .add_plugin(MovementPlugin)
+        .add_plugin(BackgroundPlugin)
         .add_startup_system(setup)
         .add_system(animation_sequence)
         .run();
@@ -51,7 +55,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Text2dBundle {
             text: Text::from_section("E", text_style.clone()).with_alignment(text_alignment),
-            transform: Transform::from_xyz(0.0, 0.0, 0.0),
+            transform: Transform::from_xyz(-30.0, 0.0, 0.0),
             ..default()
         },
         ObjectLabel("ECS-E".to_string()),
@@ -59,15 +63,15 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         Text2dBundle {
             text: Text::from_section("C", text_style.clone()).with_alignment(text_alignment),
-            transform: Transform::from_xyz(60.0, 0.0, 0.0),
+            transform: Transform::from_xyz(0.0, 0.0, 0.0),
             ..default()
         },
         ObjectLabel("ECS-C".to_string()),
     ));
     commands.spawn((
         Text2dBundle {
-            text: Text::from_section("S", text_style).with_alignment(text_alignment),
-            transform: Transform::from_xyz(120.0, 0.0, 0.0),
+            text: Text::from_section("S", text_style.clone()).with_alignment(text_alignment),
+            transform: Transform::from_xyz(30.0, 0.0, 0.0),
             ..default()
         },
         ObjectLabel("ECS-S".to_string()),
@@ -80,7 +84,11 @@ fn animation_sequence(
 ) {
     if keys.just_pressed(KeyCode::Space) {
         match counter.as_ref() {
-            Counter(0) => {
+            Counter(0) => animation_events.send(AnimationEvent::Background(BackgroundEvent {
+                speed: 1.0,
+                color: Color::RED,
+            })),
+            Counter(1) => {
                 animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
                     speed: 10.0,
                     label: ObjectLabel("ECS-S".to_string()),
@@ -105,8 +113,13 @@ fn animation_sequence(
                     rotate_type: RotationType::LinearAbsolute,
                     label: ObjectLabel("ECS-C".to_string()),
                 }));
+
+                animation_events.send(AnimationEvent::Background(BackgroundEvent {
+                    speed: 1.0,
+                    color: Color::NAVY,
+                }));
             }
-            Counter(1) => {
+            Counter(2) => {
                 animation_events.send(AnimationEvent::TextFade(TextFadeEvent {
                     speed: -1.0,
                     label: ObjectLabel("ECS-S".to_string()),
@@ -123,7 +136,7 @@ fn animation_sequence(
                     label: ObjectLabel("ECS-E".to_string()),
                 }));
             }
-            Counter(2) => {
+            Counter(3) => {
                 animation_events.send(AnimationEvent::Rotate(RotateEvent {
                     rotation_amount: Vec3 {
                         x: 0.0,
