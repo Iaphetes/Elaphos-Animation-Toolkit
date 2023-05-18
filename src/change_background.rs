@@ -26,7 +26,6 @@ fn fade_background(
         }
     }
     if let Some((color, speed)) = *target_parameters {
-        println!("Target parameters found ");
         let color_change: Vec4 = (Vec4::from(color) - Vec4::from(background_color.0)).normalize()
             * time.delta_seconds()
             * speed;
