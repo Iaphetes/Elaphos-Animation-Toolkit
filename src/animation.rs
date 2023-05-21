@@ -8,15 +8,15 @@ use crate::{
 
 #[derive(Component, Eq, PartialEq)]
 pub struct ObjectLabel(pub String);
-pub enum AnimationEvent {
+pub enum ElaphosAnimationEvent {
     Fade(FadeEvent),
     Translate(TranslateEvent),
     Rotate(RotateEvent),
     Background(BackgroundEvent),
 }
-pub struct AnimationPlugin;
+pub struct ElaphosDefaultPlugins;
 
-impl Plugin for AnimationPlugin {
+impl Plugin for ElaphosDefaultPlugins {
     fn build(&self, app: &mut App) {
         app.add_plugin(FadePlugin)
             .add_plugin(BackgroundPlugin)

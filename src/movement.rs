@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::animation::{AnimationEvent, ObjectLabel};
+use crate::animation::{ElaphosAnimationEvent, ObjectLabel};
 #[derive(Component)]
 struct Translate {
     waypoints: Vec<Vec3>,
@@ -42,7 +42,7 @@ pub struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<AnimationEvent>()
+        app.add_event::<ElaphosAnimationEvent>()
             .add_system(rotation_init)
             .add_system(perform_rotation)
             .add_system(translation_init)
@@ -51,11 +51,11 @@ impl Plugin for MovementPlugin {
 }
 fn translation_init(
     mut commands: Commands,
-    mut animation_events: EventReader<AnimationEvent>,
+    mut animation_events: EventReader<ElaphosAnimationEvent>,
     transforms: Query<(Entity, &Transform, &ObjectLabel)>,
 ) {
     for animation_event in &mut animation_events {
-        if let AnimationEvent::Translate(movement_event) = animation_event {
+        if let ElaphosAnimationEvent::Translate(movement_event) = animation_event {
             for (entity, transform, object_label) in &transforms {
                 if object_label == &movement_event.label {
                     commands.entity(entity).insert(Translate {
@@ -77,11 +77,11 @@ fn translation_init(
 }
 fn rotation_init(
     mut commands: Commands,
-    mut animation_events: EventReader<AnimationEvent>,
+    mut animation_events: EventReader<ElaphosAnimationEvent>,
     transforms: Query<(Entity, &Transform, &ObjectLabel)>,
 ) {
     for animation_event in &mut animation_events {
-        if let AnimationEvent::Rotate(rotation_event) = animation_event {
+        if let ElaphosAnimationEvent::Rotate(rotation_event) = animation_event {
             for (entity, transform, object_label) in &transforms {
                 if object_label == &rotation_event.label {
                     println!("Got {:?}", rotation_event.rotation_amount);

@@ -1,6 +1,6 @@
 use bevy::{prelude::*, text::Text};
 
-use crate::animation::{AnimationEvent, ObjectLabel};
+use crate::animation::{ElaphosAnimationEvent, ObjectLabel};
 #[derive(Component)]
 struct Fade {
     pub speed: f32,
@@ -14,7 +14,7 @@ pub struct FadePlugin;
 
 impl Plugin for FadePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<AnimationEvent>()
+        app.add_event::<ElaphosAnimationEvent>()
             .add_system(fade_init)
             .add_system(text_fade);
     }
@@ -22,12 +22,12 @@ impl Plugin for FadePlugin {
 
 fn fade_init(
     mut commands: Commands,
-    mut animation_events: EventReader<AnimationEvent>,
+    mut animation_events: EventReader<ElaphosAnimationEvent>,
     texts: Query<(Entity, &mut Text, &ObjectLabel)>,
     sprites: Query<(Entity, &mut Sprite, &ObjectLabel)>,
 ) {
     for animation_event in &mut animation_events {
-        if let AnimationEvent::Fade(fade_event) = animation_event {
+        if let ElaphosAnimationEvent::Fade(fade_event) = animation_event {
             let mut target_entity: Option<Entity> = None;
             let mut target_color: Option<Color> = None;
             for (entity, text, object_label) in &texts {
