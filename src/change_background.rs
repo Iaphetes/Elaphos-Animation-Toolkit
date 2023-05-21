@@ -32,8 +32,7 @@ fn fade_background(
         if color_change.is_nan()
             || color_change.length() > (Vec4::from(color) - Vec4::from(background_color.0)).length()
         {
-            **background_color == color;
-            println!("Final color reacehed");
+            **background_color = color;
             *target_parameters = None;
         } else {
             **background_color += color_change;
