@@ -19,6 +19,7 @@ pub struct AnimationPlugin;
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(FadePlugin)
+            .add_plugin(BackgroundPlugin)
             .add_plugin(MovementPlugin)
             .add_plugin(BackgroundPlugin);
     }
