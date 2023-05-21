@@ -60,12 +60,13 @@ fn fade_alpha(color: &mut Color, fade: &Fade, delta_seconds: f32) -> bool {
     *color = color.with_a(color.a() - fade.fade_amount * delta_seconds * fade.speed);
     if fade.speed > 0.0 && color.a() <= 0.0 {
         *color = color.with_a(0.0);
-        return true;
+        true
     } else if fade.speed < 0.0 && color.a() >= 1.0 {
         *color = color.with_a(1.0);
-        return true;
+        true
+    } else {
+        false
     }
-    return false;
 }
 fn text_fade(
     mut commands: Commands,
@@ -76,7 +77,7 @@ fn text_fade(
     for (entity, mut text, fade) in texts.iter_mut() {
         let mut all_sections_finished: bool = true;
         for section in text.sections.iter_mut() {
-            if !fade_alpha(&mut section.style.color, &fade, time.delta_seconds()) {
+            if !fade_alpha(&mut section.style.color, fade, time.delta_seconds()) {
                 all_sections_finished = false;
             }
         }
@@ -85,7 +86,7 @@ fn text_fade(
         }
     }
     for (entity, mut sprite, fade) in sprites.iter_mut() {
-        if fade_alpha(&mut sprite.color, &fade, time.delta_seconds()) {
+        if fade_alpha(&mut sprite.color, fade, time.delta_seconds()) {
             commands.entity(entity).remove::<Fade>();
         }
     }
