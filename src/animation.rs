@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
 use crate::{
-    change_background::{BackgroundEvent, BackgroundPlugin},
-    fade::{FadeEvent, FadePlugin},
-    movement::{MovementPlugin, RotateEvent, TranslateEvent},
+    change_background::{BackgroundEvent, ElaphosBackgroundPlugin},
+    fade::{ElaphosFadePlugin, FadeEvent},
+    movement::{ElaphosMovementPlugin, RotateEvent, TranslateEvent},
 };
 
 #[derive(Component, Eq, PartialEq)]
@@ -18,9 +18,9 @@ pub struct ElaphosDefaultPlugins;
 
 impl Plugin for ElaphosDefaultPlugins {
     fn build(&self, app: &mut App) {
-        app.add_plugin(FadePlugin)
-            .add_plugin(BackgroundPlugin)
-            .add_plugin(MovementPlugin)
-            .add_plugin(BackgroundPlugin);
+        app.add_plugin(ElaphosFadePlugin)
+            .add_plugin(ElaphosBackgroundPlugin)
+            .add_plugin(ElaphosMovementPlugin)
+            .add_plugin(ElaphosBackgroundPlugin);
     }
 }

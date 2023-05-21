@@ -5,9 +5,9 @@ pub struct BackgroundEvent {
     pub speed: f32,
     pub color: Color,
 }
-pub struct BackgroundPlugin;
+pub struct ElaphosBackgroundPlugin;
 
-impl Plugin for BackgroundPlugin {
+impl Plugin for ElaphosBackgroundPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ElaphosAnimationEvent>()
             .add_system(fade_background);

@@ -10,9 +10,9 @@ pub struct FadeEvent {
     pub speed: f32,
     pub label: ObjectLabel,
 }
-pub struct FadePlugin;
+pub struct ElaphosFadePlugin;
 
-impl Plugin for FadePlugin {
+impl Plugin for ElaphosFadePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ElaphosAnimationEvent>()
             .add_system(fade_init)

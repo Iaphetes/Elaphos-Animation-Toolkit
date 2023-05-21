@@ -38,9 +38,9 @@ pub struct TranslateEvent {
     pub movement_type: TranslationType,
     pub label: ObjectLabel,
 }
-pub struct MovementPlugin;
+pub struct ElaphosMovementPlugin;
 
-impl Plugin for MovementPlugin {
+impl Plugin for ElaphosMovementPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ElaphosAnimationEvent>()
             .add_system(rotation_init)
