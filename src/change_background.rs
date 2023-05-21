@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::animation::{ElaphosAnimationEvent, ObjectLabel};
+use crate::animation::ElaphosAnimationEvent;
 pub struct BackgroundEvent {
     pub speed: f32,
     pub color: Color,
@@ -14,7 +14,6 @@ impl Plugin for BackgroundPlugin {
     }
 }
 fn fade_background(
-    mut commands: Commands,
     mut animation_events: EventReader<ElaphosAnimationEvent>,
     mut background_color: ResMut<ClearColor>,
     mut target_parameters: Local<Option<(Color, f32)>>,

@@ -123,7 +123,7 @@ fn perform_rotation(
                     y: euler_y,
                     z: euler_z,
                 };
-                let mut rotation_amount: Vec3 = (target_rotation - euler_rotation).normalize()
+                let rotation_amount: Vec3 = (target_rotation - euler_rotation).normalize()
                     * time.delta_seconds()
                     * movement.speed;
                 let new_rotation: Vec3;
