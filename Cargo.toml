@@ -11,3 +11,6 @@ homepage = "https://github.com/Iaphetes/Elaphos-Animation-Toolkit"
 
 [dependencies]
 bevy = { version = "0.10.1", features = ["dynamic_linking"]}
+[[example]]
+name = "slideshow"
+path = "examples/slideshow.rs"

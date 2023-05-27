@@ -16,15 +16,17 @@ impl Plugin for ElaphosFadePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ElaphosAnimationEvent>()
             .add_system(fade_init)
-            .add_system(text_fade);
+            .add_system(fade_system);
     }
 }
 
 fn fade_init(
     mut commands: Commands,
     mut animation_events: EventReader<ElaphosAnimationEvent>,
+    // materials: AssetServer<StandardMaterial>,
     texts: Query<(Entity, &mut Text, &ObjectLabel)>,
     sprites: Query<(Entity, &mut Sprite, &ObjectLabel)>,
+    // scenes: Query<(Entity, &mut Scene, &ObjectLabel)>,
 ) {
     for animation_event in &mut animation_events {
         if let ElaphosAnimationEvent::Fade(fade_event) = animation_event {
@@ -42,7 +44,9 @@ fn fade_init(
                     target_color = Some(sprite.color);
                 }
             }
-
+            // for (entity, scene, object_label) in &scenes {
+            //     println!("{:#?}", scene);
+            // }
             if let (Some(entity), Some(color)) = (target_entity, target_color) {
                 let mut fade_amount: f32 = color.a();
                 if fade_amount <= 0.0 {
@@ -68,7 +72,7 @@ fn fade_alpha(color: &mut Color, fade: &Fade, delta_seconds: f32) -> bool {
         false
     }
 }
-fn text_fade(
+fn fade_system(
     mut commands: Commands,
     time: Res<Time>,
     mut texts: Query<(Entity, &mut Text, &Fade)>,
