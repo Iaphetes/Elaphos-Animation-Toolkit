@@ -14,3 +14,6 @@ bevy = { version = "0.10.1", features = ["dynamic_linking"]}
 [[example]]
 name = "slideshow"
 path = "examples/slideshow.rs"
+[[example]]
+name = "3d"
+path = "examples/3d.rs"

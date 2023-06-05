@@ -6,7 +6,7 @@ use crate::{
     movement::{ElaphosMovementPlugin, RotateEvent, TranslateEvent},
 };
 
-#[derive(Component, Eq, PartialEq)]
+#[derive(Component, Eq, PartialEq, Debug)]
 pub struct ObjectLabel(pub String);
 pub enum ElaphosAnimationEvent {
     Fade(FadeEvent),

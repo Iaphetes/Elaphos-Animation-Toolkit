@@ -33,7 +33,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         BloomSettings::default(),
     ));
-    let font = asset_server.load("./fonts/anodina/Anodina-Bold.otf");
+    let font = asset_server.load("./fonts/jupiteroid/JupiteroidBold-9YgLj.ttf");
     let text_style = TextStyle {
         font,
         font_size: 60.0,

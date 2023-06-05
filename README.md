@@ -128,3 +128,7 @@ fn animation_sequence(
     }
 }
 ```
+# Credits
+For the example files I used some freely available resources.
+- "Earth Hologram" - 3D Model (https://skfb.ly/o9Eoy) by Rafael Rodrigues is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+- "Jupiteroid" - Font (https://www.fontspace.com/jupiteroid-font-f90261) by GGBotNet is licensed under Creative Commons Zero v1.0 Universal / Public Domain (https://creativecommons.org/publicdomain/zero/1.0/)
