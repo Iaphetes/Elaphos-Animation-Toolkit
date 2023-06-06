@@ -108,6 +108,11 @@ fn animation_sequence(
                     player.play(animations.0[0].clone_weak()).repeat();
                     player.set_speed(0.5);
                 }
+
+                animation_events.send(ElaphosAnimationEvent::Fade(FadeEvent {
+                    speed: -0.5,
+                    label: ObjectLabel("Earth_Hologram".to_string()),
+                }));
             }
             Counter(2) => {}
             Counter(_) => {}

@@ -70,13 +70,18 @@ fn fade_init(
                                 Ok((name, mut material_handle)) => {
                                     println!("Name {name}");
                                     let mut new_material: Option<StandardMaterial> = None;
-                                    if let Some(material) =
+                                    if let Some(mut material) =
                                         material_assets.get_mut(&material_handle)
                                     {
                                         new_material = Some(material.clone());
+
+                                        // material.base_color = material.base_color.with_a(0.0);
+                                        // material.emissive = material.emissive.with_a(0.0);
+                                        println!("Material {:#?}", material);
                                     }
 
-                                    if let Some(new_material) = new_material {
+                                    if let Some(mut new_material) = new_material {
+                                        new_material.alpha_mode = AlphaMode::Blend;
                                         previous_alphas
                                             .insert(name.to_string(), new_material.base_color.a());
                                         if !original_alphas.contains(entity) {
@@ -139,10 +144,10 @@ fn fade_system(
     time: Res<Time>,
     mut texts: Query<(Entity, &mut Text, &Fade)>,
     mut sprites: Query<(Entity, &mut Sprite, &Fade)>,
-    mut models: Query<(Entity, &Fade), With<Handle<Scene>>>,
+    mut models: Query<(Entity, &Fade, &OriginalAlphas), With<Handle<Scene>>>,
     scene_instances: Query<&SceneInstance>,
     scene_spawner: Res<SceneSpawner>,
-    original_alphas: Query<&OriginalAlphas>,
+    // original_alphas: Query<&OriginalAlphas>,
     mut material_handles: Query<(&Name, &mut Handle<StandardMaterial>)>,
     mut material_assets: ResMut<Assets<StandardMaterial>>,
 ) {
@@ -174,7 +179,7 @@ fn fade_system(
             commands.entity(entity).remove::<Fade>();
         }
     }
-    for (entity, fade) in &mut models {
+    for (entity, fade, original_alphas) in &mut models {
         let mut all_sections_finished: bool = true;
         match scene_instances.get(entity) {
             Ok(scene_instance) => {
@@ -197,7 +202,20 @@ fn fade_system(
                                         ) {
                                             all_sections_finished = false;
                                         }
-                                    } // if let Some(alpha) = original_alphas.get(entity) {}
+                                    } else {
+                                        if let Some(alpha) =
+                                            original_alphas.0.get(&name.to_string())
+                                        {
+                                            if !fade_alpha(
+                                                &mut material.base_color,
+                                                fade,
+                                                time.delta_seconds(),
+                                                *alpha,
+                                            ) {
+                                                all_sections_finished = false;
+                                            }
+                                        }
+                                    }
                                 }
                                 None => {
                                     // println!("Invalid shader handle")
