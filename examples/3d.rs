@@ -70,18 +70,31 @@ fn setup(
     };
     let text_alignment = TextAlignment::Center;
     // Spawn a text bundle with the ObjectLabel "Elaphos"
-    let e: Entity = commands
-        .spawn((
-            SceneBundle {
-                scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
-                transform: Transform::from_scale(Vec3::splat(2.0))
-                    .with_translation(Vec3::splat(0.0)),
-                ..default()
-            },
-            ObjectLabel("Earth_Hologram".to_owned()),
-        ))
-        .id();
+    commands.spawn((
+        SceneBundle {
+            scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
+            transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
+                x: -5.0,
+                y: 0.0,
+                z: 0.0,
+            }),
+            ..default()
+        },
+        ObjectLabel("Earth_Hologram".to_owned()),
+    ));
 
+    commands.spawn((
+        SceneBundle {
+            scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
+            transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
+                x: 5.0,
+                y: 0.0,
+                z: 0.0,
+            }),
+            ..default()
+        },
+        ObjectLabel("Earth_Hologram_2".to_owned()),
+    ));
     animations
         .0
         .push(asset_server.load("3d_models/Earth Hologram.gltf#Animation0"));

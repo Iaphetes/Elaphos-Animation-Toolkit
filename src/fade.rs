@@ -62,22 +62,16 @@ fn fade_init(
                 let mut previous_alphas: HashMap<String, f32> = HashMap::new();
                 match scene_instances.get(entity) {
                     Ok(scene_instance) => {
-                        println!("Found scene instance");
                         for scene_entity in
                             scene_spawner.iter_instance_entities(**scene_instance.to_owned())
                         {
                             match material_handles.get_mut(scene_entity) {
                                 Ok((name, mut material_handle)) => {
-                                    println!("Name {name}");
                                     let mut new_material: Option<StandardMaterial> = None;
                                     if let Some(mut material) =
                                         material_assets.get_mut(&material_handle)
                                     {
                                         new_material = Some(material.clone());
-
-                                        // material.base_color = material.base_color.with_a(0.0);
-                                        // material.emissive = material.emissive.with_a(0.0);
-                                        println!("Material {:#?}", material);
                                     }
 
                                     if let Some(mut new_material) = new_material {
@@ -85,7 +79,6 @@ fn fade_init(
                                         previous_alphas
                                             .insert(name.to_string(), new_material.base_color.a());
                                         if !original_alphas.contains(entity) {
-                                            println!("Adding new material");
                                             *material_handle = material_assets.add(new_material);
                                         }
                                     }
@@ -147,7 +140,6 @@ fn fade_system(
     mut models: Query<(Entity, &Fade, &OriginalAlphas), With<Handle<Scene>>>,
     scene_instances: Query<&SceneInstance>,
     scene_spawner: Res<SceneSpawner>,
-    // original_alphas: Query<&OriginalAlphas>,
     mut material_handles: Query<(&Name, &mut Handle<StandardMaterial>)>,
     mut material_assets: ResMut<Assets<StandardMaterial>>,
 ) {
@@ -191,9 +183,6 @@ fn fade_system(
                             match material_assets.get_mut(&material_handle) {
                                 Some(material) => {
                                     if fade.speed > 0.0 {
-                                        // println!("Reducing");
-                                        // println!("Alpha before: {}", material.base_color.a());
-                                        // println!("Alpha after: {}", material.base_color.a());
                                         if !fade_alpha(
                                             &mut material.base_color,
                                             fade,
