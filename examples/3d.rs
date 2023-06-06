@@ -3,10 +3,14 @@ use bevy::{
     prelude::*,
     text::Text,
 };
-use elaphos::animation::{ElaphosAnimationEvent, ElaphosDefaultPlugins, ObjectLabel};
-use elaphos::change_background::BackgroundEvent;
-use elaphos::fade::FadeEvent;
-use elaphos::movement::{RotateEvent, RotationType, TranslateEvent, TranslationType};
+use elaphos::{
+    animation::ElaphosAnimationEvent,
+    change_background::BackgroundEvent,
+    fade::FadeEvent,
+    movement::{RotateEvent, RotationType, TranslateEvent, TranslationType},
+    ElaphosBundle3D, ElaphosDefaultPlugins, ObjectLabel,
+};
+
 #[derive(Resource)]
 struct Counter(u32);
 #[derive(Resource)]
@@ -16,7 +20,7 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .add_plugins(DefaultPlugins)
-        .add_plugin(ElaphosDefaultPlugins)
+        .add_plugins(ElaphosDefaultPlugins)
         .insert_resource(Counter(0))
         .insert_resource(Animations(Vec::new()))
         .add_event::<ElaphosAnimationEvent>()
@@ -69,8 +73,7 @@ fn setup(
         color: Color::rgb(0.0, 0.5, 0.0),
     };
     let text_alignment = TextAlignment::Center;
-    // Spawn a text bundle with the ObjectLabel "Elaphos"
-    commands.spawn((
+    commands.spawn(ElaphosBundle3D::from_scene_bundle(
         SceneBundle {
             scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
             transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
@@ -80,10 +83,10 @@ fn setup(
             }),
             ..default()
         },
-        ObjectLabel("Earth_Hologram".to_owned()),
+        "Earth_Hologram",
     ));
 
-    commands.spawn((
+    commands.spawn(ElaphosBundle3D::from_scene_bundle(
         SceneBundle {
             scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
             transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
@@ -93,7 +96,7 @@ fn setup(
             }),
             ..default()
         },
-        ObjectLabel("Earth_Hologram_2".to_owned()),
+        "Earth_Hologram_2",
     ));
     animations
         .0

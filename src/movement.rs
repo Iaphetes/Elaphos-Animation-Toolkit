@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::animation::{ElaphosAnimationEvent, ObjectLabel};
+use crate::{animation::ElaphosAnimationEvent, ObjectLabel};
 #[derive(Component)]
 struct Translate {
     waypoints: Vec<Vec3>,

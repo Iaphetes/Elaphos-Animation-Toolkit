@@ -6,7 +6,11 @@ use bevy::{
     text::Text,
 };
 
-use crate::animation::{ElaphosAnimationEvent, ObjectLabel};
+use crate::{
+    animation::ElaphosAnimationEvent,
+    material_interaction::{self, get_attached_standardmaterial},
+    ObjectLabel,
+};
 #[derive(Component)]
 struct Fade {
     pub speed: f32,
@@ -21,11 +25,72 @@ pub struct ElaphosFadePlugin;
 impl Plugin for ElaphosFadePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ElaphosAnimationEvent>()
+            .add_system(init)
             .add_system(fade_init)
             .add_system(fade_system);
     }
 }
 
+#[derive(Component)]
+pub struct InitialSettings(pub Vec<ElaphosSetting>);
+pub enum ElaphosSetting {
+    AlphaMode(AlphaMode),
+    DoubleSided,
+}
+fn init(
+    mut commands: Commands,
+    init_models: Query<(Entity, &InitialSettings), With<Handle<Scene>>>,
+    mut material_handles: Query<(&Name, &mut Handle<StandardMaterial>)>,
+    mut material_assets: ResMut<Assets<StandardMaterial>>,
+    original_alphas: Query<&OriginalAlphas>,
+    scene_instances: Query<&SceneInstance>,
+    scene_spawner: Res<SceneSpawner>,
+) {
+    for (entity, initial_settings) in &init_models {
+        let mut previous_alphas: HashMap<String, f32> = HashMap::new();
+
+        let mut new_material: Option<StandardMaterial> = None;
+        match get_attached_standardmaterial(
+            entity,
+            &material_handles,
+            &material_assets,
+            &scene_instances,
+            &scene_spawner,
+        ) {
+            Ok(scene_entity) => {
+                println!("Found material");
+                if let Ok((name, mut material_handle)) = material_handles.get_mut(scene_entity) {
+                    if let Some(mut material) = material_assets.get_mut(&material_handle) {
+                        new_material = Some(material.clone());
+                    }
+
+                    if let Some(mut new_material) = new_material {
+                        new_material.alpha_mode = AlphaMode::Blend;
+
+                        for setting in &initial_settings.0 {
+                            match setting {
+                                ElaphosSetting::AlphaMode(mode) => {
+                                    new_material.alpha_mode = AlphaMode::Blend;
+                                }
+                                ElaphosSetting::DoubleSided => {
+                                    new_material.cull_mode = None;
+                                    new_material.double_sided = true;
+                                }
+                            }
+                        }
+                        println!("{:#?}", new_material);
+                        previous_alphas.insert(name.to_string(), new_material.base_color.a());
+                        *material_handle = material_assets.add(new_material);
+                        if !original_alphas.contains(entity) {}
+                    }
+                }
+            }
+            Err(error) => println!("Error {}", error),
+        };
+
+        commands.entity(entity).remove::<InitialSettings>();
+    }
+}
 #[derive(Component)]
 struct OriginalAlphas(HashMap<String, f32>);
 
@@ -60,37 +125,74 @@ fn fade_init(
 
             for (entity, object_label) in &models {
                 let mut previous_alphas: HashMap<String, f32> = HashMap::new();
-                match scene_instances.get(entity) {
-                    Ok(scene_instance) => {
-                        for scene_entity in
-                            scene_spawner.iter_instance_entities(**scene_instance.to_owned())
-                        {
-                            match material_handles.get_mut(scene_entity) {
-                                Ok((name, mut material_handle)) => {
-                                    let mut new_material: Option<StandardMaterial> = None;
-                                    if let Some(mut material) =
-                                        material_assets.get_mut(&material_handle)
-                                    {
-                                        new_material = Some(material.clone());
-                                    }
+                // match get_attached_standardmaterial(
+                //     entity,
+                //     &material_handles,
+                //     &material_assets,
+                //     &scene_instances,
+                //     &scene_spawner,
+                // ) {
+                //     Ok(scene_entity) => {
+                //         if let Ok((name, mut material_handle)) =
+                //             material_handles.get_mut(scene_entity)
+                //         {
+                //             println!("Found handle");
+                //             let mut new_material: Option<StandardMaterial> = None;
+                //             if let Some(mut material) = material_assets.get_mut(&material_handle) {
+                //                 new_material = Some(material.clone());
+                //             }
 
-                                    if let Some(mut new_material) = new_material {
-                                        new_material.alpha_mode = AlphaMode::Blend;
-                                        previous_alphas
-                                            .insert(name.to_string(), new_material.base_color.a());
-                                        if !original_alphas.contains(entity) {
-                                            *material_handle = material_assets.add(new_material);
-                                        }
-                                    }
-                                }
-                                Err(error) => {
-                                    println!("No material attached to entity {:?}", error)
-                                }
-                            }
-                        }
-                    }
-                    Err(error) => println!("No scene attached to entity {:?}", error),
-                }
+                //             if let Some(mut new_material) = new_material {
+                //                 new_material.alpha_mode = AlphaMode::Blend;
+                //                 new_material.cull_mode = None;
+                //                 new_material.double_sided = true;
+
+                //                 // println!("{:#?}", new_material);
+                //                 previous_alphas
+                //                     .insert(name.to_string(), new_material.base_color.a());
+                //                 if !original_alphas.contains(entity) {
+                //                     *material_handle = material_assets.add(new_material);
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     Err(error) => println!("Error {}", error),
+                // };
+                // match scene_instances.get(entity) {
+                //     Ok(scene_instance) => {
+                //         for scene_entity in
+                //             scene_spawner.iter_instance_entities(**scene_instance.to_owned())
+                //         {
+                //             match material_handles.get_mut(scene_entity) {
+                //                 Ok((name, mut material_handle)) => {
+                //                     let mut new_material: Option<StandardMaterial> = None;
+                //                     if let Some(mut material) =
+                //                         material_assets.get_mut(&material_handle)
+                //                     {
+                //                         new_material = Some(material.clone());
+                //                     }
+
+                //                     if let Some(mut new_material) = new_material {
+                //                         new_material.alpha_mode = AlphaMode::Blend;
+                //                         new_material.cull_mode = None;
+                //                         new_material.double_sided = true;
+
+                //                         println!("{:#?}", new_material);
+                //                         previous_alphas
+                //                             .insert(name.to_string(), new_material.base_color.a());
+                //                         if !original_alphas.contains(entity) {
+                //                             *material_handle = material_assets.add(new_material);
+                //                         }
+                //                     }
+                //                 }
+                //                 Err(error) => {
+                //                     println!("No material attached to entity {:?}", error)
+                //                 }
+                //             }
+                //         }
+                //     }
+                //     Err(error) => println!("No scene attached to entity {:?}", error),
+                // }
 
                 println!("{:#?}", object_label);
                 if !original_alphas.contains(entity) {
