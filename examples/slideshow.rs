@@ -3,17 +3,20 @@ use bevy::{
     prelude::*,
     text::Text,
 };
-use elaphos::animation::{ElaphosAnimationEvent, ElaphosDefaultPlugins, ObjectLabel};
-use elaphos::change_background::BackgroundEvent;
-use elaphos::fade::FadeEvent;
-use elaphos::movement::{RotateEvent, RotationType, TranslateEvent, TranslationType};
+use elaphos::{
+    animation::ElaphosAnimationEvent,
+    change_background::BackgroundEvent,
+    fade::FadeEvent,
+    movement::{TranslateEvent, TranslationType},
+    ElaphosDefaultPlugins, ObjectLabel,
+};
 #[derive(Resource)]
 struct Counter(u32);
 fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .add_plugins(DefaultPlugins)
-        .add_plugin(ElaphosDefaultPlugins)
+        .add_plugins(ElaphosDefaultPlugins)
         .insert_resource(Counter(0))
         .add_event::<ElaphosAnimationEvent>()
         .add_startup_system(setup)

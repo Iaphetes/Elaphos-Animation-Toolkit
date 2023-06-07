@@ -1,10 +1,7 @@
-use bevy::prelude::*;
-
 use crate::{
-    change_background::{BackgroundEvent, ElaphosBackgroundPlugin},
-    fade::{ElaphosFadePlugin, FadeEvent},
-    movement::{ElaphosMovementPlugin, RotateEvent, TranslateEvent},
-    ObjectLabel,
+    change_background::BackgroundEvent,
+    fade::FadeEvent,
+    movement::{RotateEvent, TranslateEvent},
 };
 
 pub enum ElaphosAnimationEvent {

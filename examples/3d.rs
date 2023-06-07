@@ -1,14 +1,11 @@
 use bevy::{
     core_pipeline::{bloom::BloomSettings, tonemapping::Tonemapping},
     prelude::*,
-    text::Text,
 };
 use elaphos::{
     animation::ElaphosAnimationEvent,
-    change_background::BackgroundEvent,
-    fade::FadeEvent,
-    movement::{RotateEvent, RotationType, TranslateEvent, TranslationType},
-    ElaphosBundle3D, ElaphosDefaultPlugins, ObjectLabel,
+    fade::{ElaphosSetting, FadeEvent, InitialSettings},
+    ElaphosDefaultPlugins, ElaphosSceneBundle, ObjectLabel,
 };
 
 #[derive(Resource)]
@@ -65,16 +62,9 @@ fn setup(
         },
         BloomSettings::default(),
     ));
-
-    let font = asset_server.load("./fonts/jupiteroid/JupiteroidBold-9YgLj.ttf");
-    let text_style = TextStyle {
-        font,
-        font_size: 60.0,
-        color: Color::rgb(0.0, 0.5, 0.0),
-    };
-    let text_alignment = TextAlignment::Center;
-    commands.spawn(ElaphosBundle3D::from_scene_bundle(
-        SceneBundle {
+    // Spawns two instances of 'Earth Hologram' which will have double sided meshes and a blending alpha mode for fading
+    commands.spawn(ElaphosSceneBundle {
+        scene_bundle: SceneBundle {
             scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
             transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
                 x: -5.0,
@@ -83,21 +73,29 @@ fn setup(
             }),
             ..default()
         },
-        "Earth_Hologram",
-    ));
+        object_label: ObjectLabel("Earth_Hologram".to_owned()),
+        initial_settings: InitialSettings(vec![
+            ElaphosSetting::AlphaMode(AlphaMode::Blend),
+            ElaphosSetting::DoubleSided,
+        ]),
+    });
 
-    commands.spawn(ElaphosBundle3D::from_scene_bundle(
-        SceneBundle {
+    commands.spawn(ElaphosSceneBundle {
+        scene_bundle: SceneBundle {
             scene: asset_server.load("3d_models/Earth Hologram.gltf#Scene0"),
-            transform: Transform::from_scale(Vec3::splat(2.0)).with_translation(Vec3 {
+            transform: Transform::from_scale(Vec3::splat(1.0)).with_translation(Vec3 {
                 x: 5.0,
                 y: 0.0,
                 z: 0.0,
             }),
             ..default()
         },
-        "Earth_Hologram_2",
-    ));
+        object_label: ObjectLabel("Earth_Hologram_2".to_owned()),
+        initial_settings: InitialSettings(vec![
+            ElaphosSetting::AlphaMode(AlphaMode::Blend),
+            ElaphosSetting::DoubleSided,
+        ]),
+    });
     animations
         .0
         .push(asset_server.load("3d_models/Earth Hologram.gltf#Animation0"));
@@ -106,28 +104,37 @@ fn animation_sequence(
     mut counter: ResMut<Counter>,
     mut animation_events: EventWriter<ElaphosAnimationEvent>,
     keys: Res<Input<KeyCode>>,
-
     mut animation_player: Query<&mut AnimationPlayer>,
-    mut animations: ResMut<Animations>,
-    animation_elements: Query<Entity, With<ObjectLabel>>,
+    animations: ResMut<Animations>,
 ) {
     if keys.just_pressed(KeyCode::Space) {
         match counter.as_ref() {
             Counter(0) => {
+                // Send a fade command to both models
                 animation_events.send(ElaphosAnimationEvent::Fade(FadeEvent {
                     speed: 0.5,
                     label: ObjectLabel("Earth_Hologram".to_string()),
                 }));
+                animation_events.send(ElaphosAnimationEvent::Fade(FadeEvent {
+                    speed: 0.5,
+                    label: ObjectLabel("Earth_Hologram_2".to_string()),
+                }));
             }
             Counter(1) => {
-                for (idx, mut player) in animation_player.iter_mut().enumerate() {
+                // Start animation for all animation players
+                for (_idx, mut player) in animation_player.iter_mut().enumerate() {
                     player.play(animations.0[0].clone_weak()).repeat();
                     player.set_speed(0.5);
                 }
 
+                // Fade both objects back in
                 animation_events.send(ElaphosAnimationEvent::Fade(FadeEvent {
                     speed: -0.5,
                     label: ObjectLabel("Earth_Hologram".to_string()),
+                }));
+                animation_events.send(ElaphosAnimationEvent::Fade(FadeEvent {
+                    speed: -0.5,
+                    label: ObjectLabel("Earth_Hologram_2".to_string()),
                 }));
             }
             Counter(2) => {}
